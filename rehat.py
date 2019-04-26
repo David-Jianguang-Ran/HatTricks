@@ -20,6 +20,10 @@ class Dot:
   def y(self):
     return self._y
   
+  @property
+  def pos(self):
+    return [self._x, self._y]
+  
   def set_x_y(self,x,y):
     # please don't call this in render
     if self.board.get_dot(x,y):
@@ -88,19 +92,14 @@ class Board(SenseHat):
     """ This one only gets top bottom left and right, not diag, returns a list of dots"""
     target_x_y = [(x + 1 , y),(x - 1, y),
                   (x, y + 1),(x, y - 1)]
-    output = []
-    for some_dot in self.dots:
-      x_y = (some_dot.x, some_dot.y)
-      if x_y in target_x_y:
-        output.append(some_dot)
-    return output
+
+    return [dot for dot in self.dots if dot.pos in target_x_y]
   
   def get_dot(self,x,y):
     """ Returns None or dot object instance"""
     output = None
     for some_dot in self.dots:
-      x_y = (some_dot.x, some_dot.y)
-      if x_y == (x,y):
+      if some_dot.pos == (x,y):
         output = some_dot
     return output
     
