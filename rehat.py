@@ -1,7 +1,7 @@
 # This this a library for managing pixels in a sense hat
 import numpy as np
 import time  as t
-from sense_hat import SenseHat # dont worry about his. there is simply no sense hat lib for ubuntu
+from sense_hat import SenseHat # dont worry about this. there is simply no sense hat lib for my desktop env
 
 # TODO figure out garbage collection rules and whether unmounted dots will leak memory
 class Dot:
@@ -25,12 +25,19 @@ class Dot:
     return [self._x, self._y]
   
   def set_x_y(self,x,y):
-    # please don't call this in render
-    if self.board.get_dot(x,y):
-      raise SpaceOccupied
-    else:
-      self._x = x
-      self._y = y
+    valid = list(range(0,8))
+    if (not x in valid) or (not y in valid):
+      raise ValueError
+    
+    try:
+      if self.board.get_dot(x,y):
+        raise SpaceOccupied
+    except AttributeError:
+      # if there is no board then we allow x y to be set to what ever
+      pass
+    
+    self._x = x
+    self._y = y
     
   def dot_will_render(self):
     # every loop this method will be called, do your per dot logic here and modify it's own state accordingly
@@ -47,7 +54,11 @@ class Dot:
     self.board.dots.remove(self)
   
   def get_adjacent(self):
-    return self.board.get_adjacent_dots(self.x,self.y)
+    try:
+      return self.board.get_adjacent_dots(self.x,self.y)
+    except AttributeError:
+      raise BoardDoesNotExist
+      
   
   @property
   def render(self):
@@ -112,4 +123,9 @@ class Board(SenseHat):
     
 class SpaceOccupied(Exception):
   """Attempting to set_x_y for a occupied space"""
+  pass
+
+
+class BoardDoesNotExist(Exception):
+  """Attempting to access board when Dot is unmounted"""
   pass
