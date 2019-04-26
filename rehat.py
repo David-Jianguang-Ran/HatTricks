@@ -105,7 +105,7 @@ class Board(SenseHat):
     super().__init__()
     self.dots = []
   
-  def main(self, duration):
+  def main(self, duration, increment):
     """ Call this function with a set number of seconds to run the main loop for"""
     start_time = t.time()
     while t.time() - start_time <= duration:
@@ -121,7 +121,7 @@ class Board(SenseHat):
       self.render()
       
       # finally we sleep for a little so the loops don't go too fast
-      t.sleep(0.05)
+      t.sleep(increment)
   
   def board_will_render(self):
     # override this method to implement main logic
