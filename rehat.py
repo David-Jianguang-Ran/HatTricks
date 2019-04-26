@@ -28,7 +28,8 @@ class Dot:
   
   @property
   def pos(self):
-    return [self._x, self._y]
+    position = (self._x, self._y)
+    return position
   
   def set_x_y(self,x,y):
     # checking if render is in the call stack, if so feak out
@@ -64,16 +65,33 @@ class Dot:
     # util function for removing this dot from board
     self.board.dots.remove(self)
   
-  def get_adjacent(self):
+  def get_adjacent_dots(self):
     try:
-      return self.board.get_adjacent_dots(self.x,self.y)
+      return self.board.get_adjacent(self.x, self.y)
     except AttributeError:
       raise BoardDoesNotExist
+    
+  def get_adjacent_space(self):
+    x = self.x
+    y = self.y
+    
+    try:
+      adj_dots = self.board.get_adjacent(x,y)
+    except AttributeError:
+      raise BoardDoesNotExist
+    
+    # make a list of valid position around me
+    valid_space = find_valid_adjacent_space(x,y)
+    
+    for dot in adj_dots:
+      valid_space.remove(dot.pos)
+    
+    return valid_space
   
   @property
   def render(self):
     # Override this method to return a (int , int, int) rgb colour
-    # dot level logic that involves changing state happens here
+    # dot level logic that involves changing states here
     # please do not change x y or call set_x_y in here
     return (0,0,0)
   
@@ -114,10 +132,9 @@ class Board(SenseHat):
       self.dots.append(some_dot)
       some_dot.mount(self)
   
-  def get_adjacent_dots(self, x, y):
-    """ This one only gets top bottom left and right, not diag, returns a list of dots"""
-    target_x_y = [(x + 1 , y),(x - 1, y),
-                  (x, y + 1),(x, y - 1)]
+  def get_adjacent(self, x, y):
+    """ now this function gets all 3x3 area neighbours"""
+    target_x_y = find_valid_adjacent_space(x,y)
 
     return [dot for dot in self.dots if dot.pos in target_x_y]
   
@@ -135,7 +152,9 @@ class Board(SenseHat):
       output[dot_obj.x,dot_obj.y,:] = dot_obj.render
     self.set_pixels(output)
     
-    
+##
+# Errors and Exceptions
+
 class SpaceOccupied(Exception):
   """Attempting to set_x_y for a occupied space"""
   pass
@@ -148,3 +167,25 @@ class BoardDoesNotExist(Exception):
 class LifeCycleError(Exception):
   """Attempting to call set_x_y inside render. Please only change location of dots inside dot_will_render"""
   pass
+
+##
+# Util functions
+def find_valid_adjacent_space(x,y):
+  """
+  make a list of valid position around a pos
+  :param x:
+  :param y:
+  :return: [(x,y), ...] list of x y pos tuple
+  """
+  valid_space = []
+  for x_int in range(x - 1, x + 2):
+    if not x_int in list(range(0, 8)):
+      continue
+    else:
+      for y_int in range(y - 1, y + 2):
+        if not y_int in list(range(0, 8)):
+          continue
+        else:
+          valid_space.append((x_int, y_int))
+  return valid_space
+

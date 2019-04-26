@@ -10,3 +10,5 @@ COLORS_DICT = {
 COLORS_LIST = [var for key, var in COLORS_DICT.items()]
 
 BLANK = [(0,0,0) for i in range(0,64)]
+
+
