@@ -1,10 +1,16 @@
 # This this a library for managing pixels in a sense hat
 import numpy as np
 import time  as t
+import inspect
 from sense_hat import SenseHat # dont worry about this. there is simply no sense hat lib for my desktop env
+
 
 # TODO figure out garbage collection rules and whether unmounted dots will leak memory
 class Dot:
+  """
+  This class is basically react.Component
+  Instance this and mount them to the board (react-dom) with board.mount_dots
+  """
   def __init__(self, x=None, y=None):
     # the real x y is kep here, don't set this directly use set_x_y
     self._x = x
@@ -25,6 +31,10 @@ class Dot:
     return [self._x, self._y]
   
   def set_x_y(self,x,y):
+    # checking if render is in the call stack, if so feak out
+    if "render" in [frame[3] for frame in inspect.stack()]:
+      raise LifeCycleError
+    
     valid = list(range(0,8))
     if (not x in valid) or (not y in valid):
       raise ValueError
@@ -40,7 +50,8 @@ class Dot:
     self._y = y
     
   def dot_will_render(self):
-    # every loop this method will be called, do your per dot logic here and modify it's own state accordingly
+    # TODO I think there is a potential race condition here with mulitple dot instances that also depend on other dots
+    # every loop this method will be called, all dot location changes must happen here
     pass
   
   def mount(self, board):
@@ -58,16 +69,20 @@ class Dot:
       return self.board.get_adjacent_dots(self.x,self.y)
     except AttributeError:
       raise BoardDoesNotExist
-      
   
   @property
   def render(self):
     # Override this method to return a (int , int, int) rgb colour
+    # dot level logic that involves changing state happens here
     # please do not change x y or call set_x_y in here
     return (0,0,0)
   
   
 class Board(SenseHat):
+  """
+  This is essentially react-dom.
+  This object holds dots (components), turns main event loops and renders new led visuals
+  """
   def __init__(self):
     super().__init__()
     self.dots = []
@@ -99,7 +114,7 @@ class Board(SenseHat):
       self.dots.append(some_dot)
       some_dot.mount(self)
   
-  def get_adjacent_dots(self,x,y):
+  def get_adjacent_dots(self, x, y):
     """ This one only gets top bottom left and right, not diag, returns a list of dots"""
     target_x_y = [(x + 1 , y),(x - 1, y),
                   (x, y + 1),(x, y - 1)]
@@ -128,4 +143,8 @@ class SpaceOccupied(Exception):
 
 class BoardDoesNotExist(Exception):
   """Attempting to access board when Dot is unmounted"""
+  pass
+
+class LifeCycleError(Exception):
+  """Attempting to call set_x_y inside render. Please only change location of dots inside dot_will_render"""
   pass
