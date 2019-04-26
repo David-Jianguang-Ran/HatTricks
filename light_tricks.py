@@ -20,7 +20,7 @@ class MyOwnHat(sense_hat.SenseHat):
     def _individual_light(hat):
       x = random.randint(0, 7)
       y = random.randint(0, 7)
-      hat.set_pixel(x, y, random.choice(C.C_LIST))
+      hat.set_pixel(x, y, random.choice(C.COLORS_LIST))
       
     start_time = time.time()
     while time.time() - start_time <= duration:
