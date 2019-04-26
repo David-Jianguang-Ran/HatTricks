@@ -31,6 +31,8 @@ import spore_config as C
 import rehat
 import random
 
+from spore_config import DEBUG
+
 
 # here are some custom dot classes
 class SporeDish(rehat.Board):
@@ -39,8 +41,10 @@ class SporeDish(rehat.Board):
     # just try to find a spot for the food untill one is found
     try:
       new_food = FoodWasteMold(x=random.randint(0, 8), y=random.randint(0, 8), type="food")
+      rehat.debug_print("food spawned in pos({},{})".format(new_food.x,new_food.y))
       new_food.mount(self)
-    except rehat.SpaceOccupied:
+
+    except rehat.SpaceOccupied or ValueError:
       self._add_food()
   
   def ensure_food(self,food_count):

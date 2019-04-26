@@ -4,6 +4,7 @@ import time  as t
 import inspect
 from sense_hat import SenseHat # dont worry about this. there is simply no sense hat lib for my desktop env
 
+DEBUG = True
 
 # TODO figure out garbage collection rules and whether unmounted dots will leak memory
 class Dot:
@@ -32,11 +33,13 @@ class Dot:
     return position
   
   def set_x_y(self,x,y):
+    
     # checking if render is in the call stack, if so feak out
     if "render" in [frame[3] for frame in inspect.stack()]:
       raise LifeCycleError
     
     valid = list(range(0,8))
+    print(x,y,valid)
     if (not x in valid) or (not y in valid):
       raise ValueError
     
@@ -60,6 +63,7 @@ class Dot:
     # if the dot already pos then they must be validated
     if self._x and self._y:
       self.set_x_y(self._x,self._y)
+      self.board.dots.append(self)
       
   def unmount(self):
     # util function for removing this dot from board
@@ -129,7 +133,6 @@ class Board(SenseHat):
   
   def mount_dots(self,dots):
     for some_dot in dots:
-      self.dots.append(some_dot)
       some_dot.mount(self)
   
   def get_adjacent(self, x, y):
@@ -148,7 +151,7 @@ class Board(SenseHat):
     
   def render(self):
     output = np.zeros((8,8,3),dtype=np.int64)
-    for dot_obj in self.content:
+    for dot_obj in self.dots:
       output[dot_obj.x,dot_obj.y,:] = dot_obj.render
     self.set_pixels(output)
     
@@ -189,3 +192,8 @@ def find_valid_adjacent_space(x,y):
           valid_space.append((x_int, y_int))
   return valid_space
 
+
+def debug_print(string):
+  if DEBUG:
+    print("debug print from module {} : \n {}".format(__name__,string))
+    
