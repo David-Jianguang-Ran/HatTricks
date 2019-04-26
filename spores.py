@@ -40,11 +40,11 @@ class SporeDish(rehat.Board):
   def _add_food(self):
     # just try to find a spot for the food untill one is found
     try:
-      new_food = FoodWasteMold(x=random.randint(0, 8), y=random.randint(0, 8), type="food")
+      new_food = FoodWasteMold(x=random.randint(0, 7), y=random.randint(0, 7), type="food")
       rehat.debug_print("food spawned in pos({},{})".format(new_food.x,new_food.y))
       new_food.mount(self)
 
-    except rehat.SpaceOccupied or ValueError:
+    except rehat.SpaceOccupied:
       self._add_food()
   
   def ensure_food(self,food_count):
@@ -55,7 +55,7 @@ class SporeDish(rehat.Board):
     
   def set_starting_board(self):
     # make starting spore
-    queen_bee = Spore(x=random.randint(0,8),y=random.randint(0,8),type="stem")
+    queen_bee = Spore(x=random.randint(0,7),y=random.randint(0,7),type="stem")
     queen_bee.mount(self) # orz
 
     # food supply is ensured in board will render

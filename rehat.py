@@ -39,7 +39,7 @@ class Dot:
       raise LifeCycleError
     
     valid = list(range(0,8))
-    print(x,y,valid)
+    debug_print("set pos({},{})".format(x,y))
     if (not x in valid) or (not y in valid):
       raise ValueError
     
