@@ -5,22 +5,24 @@ DEBUG = True
 MOLD_SPAWN_THRESHOLD = 4
 MOLD_GROWTH_PERIOD = 7
 
-SPORE_SPAWN_THRESHOLD = 2
-SPORE_WASTE_DELAY = 4
+SPORE_SPAWN_THRESHOLD = 3
+SPORE_WASTE_DELAY = 2
 
 FOOD_MIN = 6
+
+STEM_CROWD_THRESHOLD = 4
 
 # VISUAL SETTINGS
 
 COLORS = {
   # FWM component
-  "food"  : (64,224,208),
-  "waste" : (160,82,45),
-  "mold"  : (34,139,34),
+  "food"  : (255,0,0),
+  "waste" : (125,0,125),
+  "mold"  : (0,0,225),
   # spore component
   "stem"  : (255,255,0),
-  "hungry": (138,43,226),
-  "fed"   : (128,0,128)
+  "hungry": (0,255,0),
+  "fed"   : (0,125,125)
 }
 
 COLORS_BASIC = {

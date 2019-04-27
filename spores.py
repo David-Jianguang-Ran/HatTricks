@@ -115,7 +115,7 @@ class Spore(rehat.Dot):
     if self.generate_waste:
       if self.generate_waste > 0:
         self.generate_waste -= 1
-      elif len(valid_space) > 0:
+      elif len(valid_space) > 0 and self.generate_waste == 0:
         new_pos = random.choice(valid_space)
         valid_space.remove(new_pos)
     
@@ -171,9 +171,16 @@ class Spore(rehat.Dot):
     adj_dots = self.get_adjacent_dots()
     
     if self.type == "stem":
+      # begins to leave if next to waste
       adj_waste = [dot for dot in adj_dots if dot.type == "waste"]
       if len(adj_waste) > 0:
         self.type = "hungry"
+      
+      # becomes hungry if next to big crowd
+      adj_stem = [dot for dot in adj_dots if dot.type == "waste"]
+      if len(adj_stem) > C.STEM_CROWD_THRESHOLD:
+        self.type = "hungry"
+        
     elif self.type == "fed":
       adj_stem = [dot for dot in adj_dots if dot.type == "stem"]
       if len(adj_stem) > 0:

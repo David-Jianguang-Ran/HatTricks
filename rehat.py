@@ -92,7 +92,6 @@ class Dot:
     
     return valid_space
   
-  @property
   def render(self):
     # Override this method to return a (int , int, int) rgb colour
     # dot level logic that involves changing states here
@@ -150,9 +149,14 @@ class Board(SenseHat):
     return output
     
   def render(self):
-    output = np.zeros((8,8,3),dtype=np.int64)
-    for dot_obj in self.dots:
-      output[dot_obj.x(),dot_obj.y(),:] = dot_obj.render
+    output = [(0,0,0) for i in range(0,64)]
+    
+    for dot in self.dots:
+      pos = dot.x * 8 + dot.y
+      output[pos] = dot.render()
+      
+    debug_print("rendering rgb pixel array{}".format(output))
+    
     self.set_pixels(output)
     
 ##
