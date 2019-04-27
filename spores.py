@@ -143,6 +143,9 @@ class Spore(rehat.Dot):
           chosen_waste = random.choice(adj_waste)
           chosen_waste.set_x_y(new_pos)
           valid_space.remove(new_pos)
+      else:
+        # crowded to death
+        self.unmount()
       
       # eat food
       adj_food = [dot for dot in adj_dots if dot.type == "food"]
