@@ -2,6 +2,7 @@
 import numpy as np
 import time  as t
 import inspect
+import uuid
 from sense_hat import SenseHat # dont worry about this. there is simply no sense hat lib for my desktop env
 
 DEBUG = True
@@ -18,6 +19,7 @@ class Dot:
     self._y = y
     
     self.board = None
+    self.identifier = uuid.uuid4()
     
   @property
   def x(self):
@@ -66,7 +68,7 @@ class Dot:
       
   def unmount(self):
     # util function for removing this dot from board
-    self.board.dots.remove(self)
+    self.board.unmount_dot(self.identifier)
   
   def get_adjacent_dots(self):
     try:
@@ -132,6 +134,11 @@ class Board(SenseHat):
   def mount_dots(self,dots):
     for some_dot in dots:
       some_dot.mount(self)
+      
+  def unmount_dot(self,identifier):
+    for dot in self.dots:
+      if dot.identifier == identifier:
+        self.dots.remove(dot)
   
   def get_adjacent(self, x, y):
     """ now this function gets all 3x3 area neighbours"""
