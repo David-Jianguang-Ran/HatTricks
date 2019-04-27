@@ -35,7 +35,7 @@ COLORS_BASIC = {
 "P" : (125,0,125)
 }
 
-k = COLORS_BASIC['k']
+k = COLORS_BASIC['K']
 
 
 LOADING_SCREEN = [
