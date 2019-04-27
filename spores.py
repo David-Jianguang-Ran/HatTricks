@@ -30,6 +30,7 @@
 import spore_config as C
 import rehat
 import random
+import time
 
 from spore_config import DEBUG
 
@@ -71,6 +72,9 @@ class FoodWasteMold(rehat.Dot):
     self.type = type
     self.mold_growth = None
     
+  def __str__(self):
+    return str("FWM type:{} pos:{}".format(self.type,self.pos))
+    
   def dot_will_render(self):
     # helper functions below
     def _make_one_mold(adj_waste):
@@ -106,6 +110,9 @@ class Spore(rehat.Dot):
     
     self.type = type
     self.generate_waste = None
+    
+  def __str__(self):
+    return str("Spore type:{} pos:{}".format(self.type,self.pos))
     
   def dot_will_render(self):
     valid_space = self.get_adjacent_space()
@@ -151,7 +158,7 @@ class Spore(rehat.Dot):
       # stems spawn new spores
       adj_stem = [dot for dot in adj_dots if dot.type == "stem"]
       
-      if len(adj_stem) <= C.SPORE_SPAWN_THRESHOLD:
+      if len(adj_stem) <= C.SPORE_SPAWN_THRESHOLD and len(valid_space) > 0:
         new_pos = random.choice(valid_space)
         valid_space.remove(new_pos)
         
@@ -193,6 +200,12 @@ class Spore(rehat.Dot):
 
 if __name__ == "__main__":
   dish = SporeDish()
+  dish.set_pixels(C.LOADING_SCREEN)
+  time.sleep(1)
+
   dish.set_starting_board()
   
-  dish.main(20, 0.1)
+  dish.main(30, 0.5)
+  
+  time.sleep(30)
+  dish.set_pixels([(0,0,0) for i in range(0,64)])

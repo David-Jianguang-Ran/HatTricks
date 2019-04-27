@@ -154,9 +154,7 @@ class Board(SenseHat):
     for dot in self.dots:
       pos = dot.x * 8 + dot.y
       output[pos] = dot.render()
-      
-    debug_print("rendering rgb pixel array{}".format(output))
-    
+
     self.set_pixels(output)
     
 ##
