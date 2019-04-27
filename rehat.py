@@ -152,7 +152,7 @@ class Board(SenseHat):
   def render(self):
     output = np.zeros((8,8,3),dtype=np.int64)
     for dot_obj in self.dots:
-      output[dot_obj.x,dot_obj.y,:] = dot_obj.render
+      output[dot_obj.x(),dot_obj.y(),:] = dot_obj.render
     self.set_pixels(output)
     
 ##
